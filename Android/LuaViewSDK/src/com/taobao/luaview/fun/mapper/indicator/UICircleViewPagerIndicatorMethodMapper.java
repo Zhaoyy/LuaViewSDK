@@ -1,6 +1,12 @@
-package com.taobao.luaview.fun.mapper.indicator;
+/*
+ * Created by LuaView.
+ * Copyright (c) 2017, Alibaba Group. All rights reserved.
+ *
+ * This source code is licensed under the MIT.
+ * For the full copyright and license information,please view the LICENSE file in the root directory of this source tree.
+ */
 
-import android.graphics.Color;
+package com.taobao.luaview.fun.mapper.indicator;
 
 import com.taobao.luaview.fun.mapper.LuaViewApi;
 import com.taobao.luaview.fun.mapper.LuaViewLib;
@@ -22,9 +28,9 @@ import java.util.List;
  *
  * @param <U>
  */
-@LuaViewLib
+@LuaViewLib(revisions = {"20170306已对标"})
 public class UICircleViewPagerIndicatorMethodMapper<U extends UDCircleViewPagerIndicator> extends UIViewMethodMapper<U> {
-    private static final String TAG = UICircleViewPagerIndicatorMethodMapper.class.getSimpleName();
+    private static final String TAG = "UICircleViewPagerIndicatorMethodMapper";
     private static final String[] sMethods = new String[]{
             "unselectedColor",//0
             "selectedColor",//1
@@ -81,15 +87,15 @@ public class UICircleViewPagerIndicatorMethodMapper<U extends UDCircleViewPagerI
      * @return
      */
     public LuaValue unselectedColor(U view, Varargs varargs) {
-        return fillColor(view, varargs);
+        return pageColor(view, varargs);
     }
 
     public LuaValue setUnselectedColor(U view, Varargs varargs) {
-        return setFillColor(view, varargs);
+        return setPageColor(view, varargs);
     }
 
     public LuaValue getUnselectedColor(U view, Varargs varargs) {
-        return getFileColor(view, varargs);
+        return getPageColor(view, varargs);
     }
 
     /**
@@ -101,17 +107,17 @@ public class UICircleViewPagerIndicatorMethodMapper<U extends UDCircleViewPagerI
      */
     @LuaViewApi(since = VmVersion.V_500)
     public LuaValue selectedColor(U view, Varargs varargs) {
-        return pageColor(view, varargs);
+        return fillColor(view, varargs);
     }
 
     @LuaViewApi(since = VmVersion.V_500)
     public LuaValue setSelectedColor(U view, Varargs varargs) {
-        return setPageColor(view, varargs);
+        return setFillColor(view, varargs);
     }
 
     @LuaViewApi(since = VmVersion.V_500)
     public LuaValue getSelectedColor(U view, Varargs varargs) {
-        return getPageColor(view, varargs);
+        return getFileColor(view, varargs);
     }
 
     /**
@@ -121,6 +127,7 @@ public class UICircleViewPagerIndicatorMethodMapper<U extends UDCircleViewPagerI
      * @param varargs
      * @return
      */
+    @Deprecated
     public LuaValue fillColor(U view, Varargs varargs) {
         if (varargs.narg() > 1) {//set
             return setFillColor(view, varargs);
@@ -146,6 +153,7 @@ public class UICircleViewPagerIndicatorMethodMapper<U extends UDCircleViewPagerI
      * @param varargs
      * @return
      */
+    @Deprecated
     public LuaValue pageColor(U view, Varargs varargs) {
         if (varargs.narg() > 1) {
             return setPageColor(view, varargs);
@@ -170,6 +178,7 @@ public class UICircleViewPagerIndicatorMethodMapper<U extends UDCircleViewPagerI
      * @param varargs
      * @return
      */
+    @Deprecated
     public LuaValue strokeWidth(U view, Varargs varargs) {
         if (varargs.narg() > 1) {
             return setStrokeWidth(view, varargs);
@@ -194,6 +203,7 @@ public class UICircleViewPagerIndicatorMethodMapper<U extends UDCircleViewPagerI
      * @param varargs
      * @return
      */
+    @Deprecated
     public LuaValue strokeColor(U view, Varargs varargs) {
         if (varargs.narg() > 1) {
             return setStrokeColor(view, varargs);
@@ -218,6 +228,7 @@ public class UICircleViewPagerIndicatorMethodMapper<U extends UDCircleViewPagerI
      * @param varargs
      * @return
      */
+    @Deprecated
     public LuaValue radius(U view, Varargs varargs) {
         if (varargs.narg() > 1) {
             return setRadius(view, varargs);
@@ -242,6 +253,7 @@ public class UICircleViewPagerIndicatorMethodMapper<U extends UDCircleViewPagerI
      * @param varargs
      * @return
      */
+    @Deprecated
     public LuaValue snap(U view, Varargs varargs) {
         if (varargs.narg() > 1) {
             return setSnap(view, varargs);
@@ -285,6 +297,7 @@ public class UICircleViewPagerIndicatorMethodMapper<U extends UDCircleViewPagerI
      * @param varargs
      * @return
      */
+    @Deprecated
     public LuaValue currentItem(U view, Varargs varargs) {
         if (varargs.narg() > 1) {
             return setCurrentItem(view, varargs);

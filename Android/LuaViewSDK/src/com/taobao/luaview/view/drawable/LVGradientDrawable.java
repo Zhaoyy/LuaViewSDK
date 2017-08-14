@@ -1,3 +1,11 @@
+/*
+ * Created by LuaView.
+ * Copyright (c) 2017, Alibaba Group. All rights reserved.
+ *
+ * This source code is licensed under the MIT.
+ * For the full copyright and license information,please view the LICENSE file in the root directory of this source tree.
+ */
+
 package com.taobao.luaview.view.drawable;
 
 import android.graphics.drawable.GradientDrawable;
@@ -14,19 +22,28 @@ public class LVGradientDrawable extends GradientDrawable {
     private int mStrokeWidth;//边框宽
     private int mStrokeColor;//边框颜色
 
-    public void setStrokeWidth(int width){
+    private float mDashWidth;//虚线尺寸
+    private float mDashGap;
+
+    public void setStrokeWidth(int width) {
         setStroke(width, mStrokeColor);
     }
 
-    public void setStrokeColor(int color){
+    public void setStrokeColor(int color) {
         setStroke(mStrokeWidth, color);
     }
 
+    public void setDashSize(Float dashWidth, Float dashGap) {//set dash size and dash gap
+        super.setStroke(mStrokeWidth, mStrokeColor, dashWidth != null ? dashWidth : 0, dashGap != null ? dashGap : 0);
+    }
+
     @Override
-    public void setStroke(int width, int color) {
+    public void setStroke(int width, int color, float dashWidth, float dashGap) {
         mStrokeWidth = width;
         mStrokeColor = color;
-        super.setStroke(width, color);
+        mDashWidth = dashWidth;
+        mDashGap = dashGap;
+        super.setStroke(width, color, dashWidth, dashGap);
     }
 
     @Override
@@ -55,5 +72,13 @@ public class LVGradientDrawable extends GradientDrawable {
 
     public int getStrokeColor() {
         return mStrokeColor;
+    }
+
+    public float getDashWidth() {
+        return mDashWidth;
+    }
+
+    public float getDashGap() {
+        return mDashGap;
     }
 }

@@ -1,10 +1,16 @@
+/*
+ * Created by LuaView.
+ * Copyright (c) 2017, Alibaba Group. All rights reserved.
+ *
+ * This source code is licensed under the MIT.
+ * For the full copyright and license information,please view the LICENSE file in the root directory of this source tree.
+ */
+
 package com.taobao.luaview.view;
 
 import android.content.Context;
-import android.graphics.Canvas;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
 import com.facebook.csslayout.CSSLayoutContext;
@@ -29,8 +35,8 @@ import java.util.ArrayList;
  * @author song
  * @date 15/8/20
  */
-public class LVViewGroup extends ForegroundRelativeLayout implements ILVViewGroup {
-    private UDViewGroup mLuaUserdata;
+public class LVViewGroup<T extends UDViewGroup> extends ForegroundRelativeLayout implements ILVViewGroup {
+    protected T mLuaUserdata;
 
     /**
      * Flexbox attributes
@@ -49,8 +55,7 @@ public class LVViewGroup extends ForegroundRelativeLayout implements ILVViewGrou
         //改在UDViewGroup中设置，减少影响面
 //        this.setFocusableInTouchMode(true);//需要设置，否则onKeyUp等事件无法监听，排查是否会带来其他问题(点击的时候需要点击两下)
 //        this.setDescendantFocusability(FOCUS_BLOCK_DESCENDANTS);
-        this.setWillNotDraw(true);
-        this.setClipChildren(false);
+//        this.setClipChildren(false);
     }
 
 
@@ -72,26 +77,19 @@ public class LVViewGroup extends ForegroundRelativeLayout implements ILVViewGrou
 
     /**
      * create user data
+     *
      * @param globals
      * @param metaTable
      * @param varargs
      * @return
      */
-    public UDViewGroup createUserdata(Globals globals, LuaValue metaTable, Varargs varargs) {
-        return new UDViewGroup(this, globals, metaTable, varargs);
+    public T createUserdata(Globals globals, LuaValue metaTable, Varargs varargs) {
+        return (T) (new UDViewGroup(this, globals, metaTable, varargs));
     }
 
     @Override
-    public UDView getUserdata() {
+    public T getUserdata() {
         return mLuaUserdata;
-    }
-
-    @Override
-    public void addLVView(final View view, Varargs a) {
-        if(this != view) {//不能自己加自己
-            final ViewGroup.LayoutParams layoutParams = LuaViewUtil.getOrCreateLayoutParams(view);
-            LVViewGroup.this.addView(LuaViewUtil.removeFromParent(view), layoutParams);
-        }
     }
 
     public void show() {
@@ -100,13 +98,6 @@ public class LVViewGroup extends ForegroundRelativeLayout implements ILVViewGrou
 
     public void hide() {
         LVViewGroup.this.setVisibility(View.GONE);
-    }
-
-    @Override
-    protected void onDraw(Canvas canvas) {
-        // TODO: 16/4/5 @野松，待和iOS的统一，目前影响flexbox的布局
-//        canvas.clipRect(0, 0, getWidth(), getHeight(), Region.Op.DIFFERENCE);
-        super.onDraw(canvas);
     }
 
     //-------------------------------------------显示回调--------------------------------------------
@@ -123,10 +114,18 @@ public class LVViewGroup extends ForegroundRelativeLayout implements ILVViewGrou
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            LuaValue result = mLuaUserdata != null ? mLuaUserdata.callOnBack() : LuaValue.FALSE;
-            return result != null && result.optboolean(false);
+            return onBackPressed();
         }
         return super.onKeyUp(keyCode, event);
+    }
+
+    /**
+     * onBack pressed
+     * @return
+     */
+    public boolean onBackPressed(){
+        LuaValue result = mLuaUserdata != null ? mLuaUserdata.callOnBack() : LuaValue.FALSE;
+        return result != null && result.optboolean(false);
     }
 
     @Override
@@ -181,7 +180,7 @@ public class LVViewGroup extends ForegroundRelativeLayout implements ILVViewGrou
             UDView nodeView = mChildNodeViews.get(i);
             View view = nodeView.getView();
 
-            addLVView(view, null);
+            LuaViewUtil.addView(this, view, null);
             getCssNode().addChild(nodeView.getCssNode());
         }
     }

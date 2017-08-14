@@ -1,3 +1,11 @@
+/*
+ * Created by LuaView.
+ * Copyright (c) 2017, Alibaba Group. All rights reserved.
+ *
+ * This source code is licensed under the MIT.
+ * For the full copyright and license information,please view the LICENSE file in the root directory of this source tree.
+ */
+
 package com.taobao.luaview.scriptbundle;
 
 import android.content.Context;
@@ -17,16 +25,15 @@ import java.io.File;
  * @date 15/11/9
  */
 public class LuaScriptManager {
-    private static final String TAG = LuaScriptManager.class.getSimpleName();
-    private static String PACKAGE_NAME;
     private static String BASE_FILECACHE_PATH;
+    private static String BASE_PREDOWNLOAD_FILECACHE_PATH;//预下载都使用data/data目录
     //folders
     private static final String PACKAGE_NAME_DEFAULT = "luaview";
     public static final String FOLDER_SCRIPT = "script";
+    public static final String FOLDER_PRE_DOWNLOAD = "predownload";
 
     //默认缓存文件的后缀
-    public static final String POSTFIX_SCRIPT_BUNDLE = ".lvbundle";
-    public static final String POSTFIX_DEFAULT = ".lv";
+    public static final String POSTFIX_SCRIPT_BUNDLE = ".lvraw";
     public static final String POSTFIX_JPG = ".jpg";
     public static final String POSTFIX_APK = ".apk";
     public static final String POSTFIX_PNG = ".png";
@@ -34,7 +41,9 @@ public class LuaScriptManager {
     public static final String POSTFIX_LUA = ".lua";
     public static final String POSTFIX_B_LUA = ".blua";
     public static final String POSTFIX_LV = ".lv";//Lua加密脚本(source or bytecode)
+    public static final String POSTFIX_LV_ZIP = ".zip";//lua的zip包
     public static final String POSTFIX_LV_BYTECODE_ZIP = ".bzip";//lua的二进制zip包
+    public static final String POSTFIX_LV_STANDARD_SYNTAX_ZIP = ".szip";//标准语法的zip包
     public static final String POSTFIX_SIGN = ".sign";
 
     /**
@@ -43,13 +52,22 @@ public class LuaScriptManager {
      * @param context
      */
     public static void init(final Context context) {
-        if (context != null) {
+        if (TextUtils.isEmpty(BASE_FILECACHE_PATH) && context != null) {
             if (!LuaViewConfig.isDebug()) {//真实环境优先使用data/data目录
                 initInternalFilePath(context);
             } else {//测试环境优先使用sd卡路径
                 if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
-                    PACKAGE_NAME = context.getPackageName();
                     BASE_FILECACHE_PATH = context.getExternalCacheDir() + File.separator;
+
+                    //base predownload path
+//                    final File file = context.getDir(PACKAGE_NAME_DEFAULT, Context.MODE_PRIVATE);
+//                    if(file != null) {
+//                        BASE_PREDOWNLOAD_FILECACHE_PATH = file.getPath() + File.separator;
+//                    } else {
+//                        BASE_PREDOWNLOAD_FILECACHE_PATH = context.getCacheDir() + File.separator;
+//                    }
+
+                    BASE_PREDOWNLOAD_FILECACHE_PATH = "/data/data/" + context.getPackageName() + "/app_luaview/";
                 } else {
                     initInternalFilePath(context);
                 }
@@ -64,24 +82,41 @@ public class LuaScriptManager {
      */
     private static void initInternalFilePath(Context context) {
         final File dir = context.getDir(PACKAGE_NAME_DEFAULT, Context.MODE_PRIVATE);
-        if (dir != null) {//优先存在 data/data/packagename/luaview
-            PACKAGE_NAME = PACKAGE_NAME_DEFAULT;
+        if (dir != null) {//优先存在 data/data/packagename/app_luaview
             BASE_FILECACHE_PATH = dir.getPath() + File.separator;
         } else {
-            PACKAGE_NAME = PACKAGE_NAME_DEFAULT;
             BASE_FILECACHE_PATH = context.getCacheDir() + File.separator;
         }
-    }
 
+        BASE_PREDOWNLOAD_FILECACHE_PATH = BASE_FILECACHE_PATH;
+    }
     //--------------------------------static methods for get file path------------------------------
 
     /**
-     * 获取基础文件路劲
+     * 获取基础文件路径
      *
      * @return
      */
     public static String getBaseFilePath() {
-        return BASE_FILECACHE_PATH + PACKAGE_NAME + File.separator;
+        return BASE_FILECACHE_PATH + PACKAGE_NAME_DEFAULT + File.separator;
+    }
+
+    /**
+     * get scriptFolderPath
+     *
+     * @return
+     */
+    public static String getBaseScriptFolderPath() {
+        return BASE_FILECACHE_PATH + PACKAGE_NAME_DEFAULT + File.separator + FOLDER_SCRIPT + File.separator;
+    }
+
+    /**
+     * get predownload folder path
+     *
+     * @return
+     */
+    public static String getBasePredownloadFolderPath() {
+        return BASE_PREDOWNLOAD_FILECACHE_PATH + FOLDER_PRE_DOWNLOAD + File.separator;
     }
 
     /**
@@ -92,7 +127,7 @@ public class LuaScriptManager {
      */
     public static String getFolderPath(final String subFolderName) {
         return new StringBuffer()
-                .append(getBaseFilePath())
+                .append(getBaseScriptFolderPath())
                 .append(subFolderName)
                 .append(File.separator)
                 .toString();
@@ -111,6 +146,19 @@ public class LuaScriptManager {
                 .append(fileNameWithPostfix)
                 .toString();
     }
+
+    /**
+     * get pre downloaded file path
+     *
+     * @param fileNameWithPostfix
+     * @return
+     */
+    public static String getPredownloadFilePath(String fileNameWithPostfix) {
+        return new StringBuffer()
+                .append(getBasePredownloadFolderPath())
+                .append(fileNameWithPostfix).toString();
+    }
+
 
     /**
      * 构建文件名称
@@ -144,7 +192,7 @@ public class LuaScriptManager {
      */
     public static String buildScriptBundleFolderPath(final String uri) {
         final String fileNameWithoutPostfix = EncryptUtil.md5Hex(uri);
-        final String folderName = new StringBuffer().append(FOLDER_SCRIPT).append(File.separator).append(fileNameWithoutPostfix).toString();//使用文件名作为子目录的名称
+        final String folderName = fileNameWithoutPostfix;//使用文件名作为子目录的名称//new StringBuffer().append(FOLDER_SCRIPT).append(File.separator).append(fileNameWithoutPostfix).toString();
         return getFolderPath(folderName);
     }
 
@@ -156,9 +204,25 @@ public class LuaScriptManager {
      */
     public static String buildScriptBundleFilePath(final String uri) {
         final String fileNameWithoutPostfix = EncryptUtil.md5Hex(uri);
-        final String folderName = new StringBuffer().append(FOLDER_SCRIPT).append(File.separator).append(fileNameWithoutPostfix).toString();//使用文件名作为子目录的名称
+        final String folderName = fileNameWithoutPostfix;//使用文件名作为子目录的名称//new StringBuffer().append(FOLDER_SCRIPT).append(File.separator).append(fileNameWithoutPostfix).toString();
         final String fileName = buildFileName(fileNameWithoutPostfix, POSTFIX_SCRIPT_BUNDLE);
         return getFilePath(folderName, fileName);
+    }
+
+
+    /**
+     * 构建预下载脚本文件名（这里直接使用脚本地址，不做任何修改）
+     *
+     * @param uri
+     * @return
+     */
+    public static String buildPredownloadScriptBundleFilePath(final String uri) {
+        if (uri != null) {
+            String fileName = uri.substring(uri.lastIndexOf('/') + 1);//只取最后的文件名
+            return getPredownloadFilePath(fileName);
+        } else {
+            return null;
+        }
     }
 
     //------------------------------------------exists----------------------------------------------
@@ -171,8 +235,20 @@ public class LuaScriptManager {
      */
     public static boolean existsScriptBundle(final String uri) {
         if (!TextUtils.isEmpty(uri)) {
-            final String scriptFilePath = buildScriptBundleFilePath(uri);//bundle exists
-            return FileUtil.exists(scriptFilePath);//这里只需要判断folder存在与否，如果folder存在则只需要用folder来判断即可
+            return FileUtil.exists(buildScriptBundleFilePath(uri));
+        }
+        return false;
+    }
+
+    /**
+     * 预下载目录下的某个文件是否存在
+     *
+     * @param uri
+     * @return
+     */
+    public static boolean existsPredownloadBundle(final String uri) {
+        if (!TextUtils.isEmpty(uri)) {
+            return FileUtil.exists(buildPredownloadScriptBundleFilePath(uri));
         }
         return false;
     }
@@ -190,6 +266,18 @@ public class LuaScriptManager {
     }
 
     /**
+     * 是否是lua的zip包（zip，bzip，szip）
+     *
+     * @param fileName
+     * @return
+     */
+    public static boolean isLuaScriptZip(final String fileName) {
+        return FileUtil.isSuffix(fileName, LuaScriptManager.POSTFIX_LV_ZIP)
+                || FileUtil.isSuffix(fileName, LuaScriptManager.POSTFIX_LV_BYTECODE_ZIP)
+                || FileUtil.isSuffix(fileName, LuaScriptManager.POSTFIX_LV_STANDARD_SYNTAX_ZIP);
+    }
+
+    /**
      * 是否是lua 二进制zip包
      *
      * @param url
@@ -199,9 +287,30 @@ public class LuaScriptManager {
         return FileUtil.isSuffix(url, LuaScriptManager.POSTFIX_LV_BYTECODE_ZIP);
     }
 
-    public static boolean isLuaBytecodeFile(final String fileName){
+    public static boolean isLuaBytecodeFile(final String fileName) {
         return FileUtil.isSuffix(fileName, LuaScriptManager.POSTFIX_B_LUA);
     }
+
+    /**
+     * 是否是标准语法的 zip包
+     *
+     * @param url
+     * @return
+     */
+    public static boolean isLuaStandardSyntaxUrl(final String url) {
+        return FileUtil.isSuffix(url, LuaScriptManager.POSTFIX_LV_STANDARD_SYNTAX_ZIP);
+    }
+
+    /**
+     * 是否是非标准语法的 zip包
+     *
+     * @param url
+     * @return
+     */
+    public static boolean isLuaUnStandardSyntaxUrl(final String url) {
+        return FileUtil.isSuffix(url, LuaScriptManager.POSTFIX_LV_ZIP);//只有zip包是非标准包，bzip、szip都认为是标准，bzip有问题么？
+    }
+
 
     /**
      * 是否是lua加密脚本

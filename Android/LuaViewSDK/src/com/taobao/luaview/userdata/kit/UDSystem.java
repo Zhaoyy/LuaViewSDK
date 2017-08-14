@@ -1,5 +1,15 @@
+/*
+ * Created by LuaView.
+ * Copyright (c) 2017, Alibaba Group. All rights reserved.
+ *
+ * This source code is licensed under the MIT.
+ * For the full copyright and license information,please view the LICENSE file in the root directory of this source tree.
+ */
+
 package com.taobao.luaview.userdata.kit;
 
+import com.taobao.luaview.fun.mapper.LuaViewLib;
+import com.taobao.luaview.global.SdkVersion;
 import com.taobao.luaview.global.VmVersion;
 import com.taobao.luaview.userdata.base.BaseLuaTable;
 import com.taobao.luaview.util.AndroidUtil;
@@ -21,6 +31,7 @@ import org.luaj.vm2.lib.ZeroArgFunction;
  * @author song
  * @date 15/9/6
  */
+@LuaViewLib(revisions = {"20170306已对标"})
 public class UDSystem extends BaseLuaTable {
 
     public UDSystem(Globals globals, LuaValue metatable) {
@@ -31,7 +42,8 @@ public class UDSystem extends BaseLuaTable {
     private void init() {
         set("ios", new ios());//是否ios
         set("android", new android());//是否android
-        set("vmVersion", new vmVersion());//Lua虚拟机版本
+        set("vmVersion", new vmVersion());//LuaView早期的版本系统 @Deprecated
+        set("sdkVersion", new sdkVersion());//LuaView版本
         set("osVersion", new osVersion());//系统版本
         set("platform", new platform());//平台信息
         set("scale", new scale());//屏幕分辨率
@@ -40,6 +52,10 @@ public class UDSystem extends BaseLuaTable {
         set("network", new network());//获取网络
         set("gc", new gc());
         set("keepScreenOn", new keepScreenOn());
+    }
+
+    private int fixIndex(Varargs varargs){
+        return varargs != null && varargs.arg1() instanceof UDSystem ? 1 : 0;
     }
 
     class ios extends VarArgFunction {
@@ -56,10 +72,18 @@ public class UDSystem extends BaseLuaTable {
         }
     }
 
+    @Deprecated
     class vmVersion extends VarArgFunction {
         @Override
         public Varargs invoke(Varargs args) {
             return valueOf(VmVersion.getCurrent());
+        }
+    }
+
+    class sdkVersion extends VarArgFunction {
+        @Override
+        public Varargs invoke(Varargs args) {
+            return valueOf(SdkVersion.getCurrent());
         }
     }
 
@@ -93,18 +117,19 @@ public class UDSystem extends BaseLuaTable {
             table.set("product", AndroidUtil.getProduct());
             table.set("manufacturer", AndroidUtil.getManufacturer());
 
-            //window size
-            int[] windowSize = AndroidUtil.getWindowSize(getContext());
-            table.set("window_width", windowSize[0]);
-            table.set("window_height", windowSize[1]);
-
             //screen size
             int[] screenSize = AndroidUtil.getWindowSizeInDp(getContext());
-            table.set("screen_width", screenSize[0]);
-            table.set("screen_height", screenSize[1]);
+            table.set("window_width", screenSize[0]);
+            table.set("window_height", screenSize[1]);
 
+            //action bar height
+            int actionBarHeight = AndroidUtil.getActionBarHeightInDp(getContext());
+            table.set("nav_height", actionBarHeight);
+            int bottomNavHeight = AndroidUtil.getNavigationBarHeightInDp(getContext());
+            table.set("bottom_nav_height", bottomNavHeight);
+            int statusBarHeight = AndroidUtil.getStatusBarHeightInDp(getContext());
+            table.set("status_bar_height", statusBarHeight);
             return table;
-//            return valueOf("TODO设备信息（Phone、Pad）等信息");
         }
     }
 
@@ -146,9 +171,10 @@ public class UDSystem extends BaseLuaTable {
     class keepScreenOn extends VarArgFunction {
         @Override
         public Varargs invoke(Varargs varargs) {
-            if (getGlobals() != null && getGlobals().getLuaView() != null) {
-                final Boolean keepScreenOn = LuaUtil.getBoolean(varargs, 2);
-                getGlobals().getLuaView().setKeepScreenOn(keepScreenOn != null ? keepScreenOn : true);
+            if (getGlobals() != null && getGlobals().getRenderTarget() != null) {
+                final int fixIndex = fixIndex(varargs);
+                final Boolean keepScreenOn = LuaUtil.getBoolean(varargs, fixIndex + 1);
+                getGlobals().getRenderTarget().setKeepScreenOn(keepScreenOn != null ? keepScreenOn : true);
             }
             return LuaValue.NIL;
         }

@@ -1,3 +1,11 @@
+/*
+ * Created by LuaView.
+ * Copyright (c) 2017, Alibaba Group. All rights reserved.
+ *
+ * This source code is licensed under the MIT.
+ * For the full copyright and license information,please view the LICENSE file in the root directory of this source tree.
+ */
+
 package com.taobao.luaview.fun.mapper.ui;
 
 import com.taobao.luaview.fun.mapper.LuaViewApi;
@@ -14,21 +22,22 @@ import java.util.List;
 /**
  * Created by tuoli on 10/9/16.
  */
-@LuaViewLib
+@LuaViewLib(revisions = {"20170306已对标"})
 public class UIWebViewMethodMapper<U extends UDWebView> extends UIViewMethodMapper<U> {
 
-    private static final String TAG = UIWebViewMethodMapper.class.getSimpleName();
+    private static final String TAG = "UIWebViewMethodMapper";
     private static final String[] sMethods = new String[]{
             "loadUrl",  //0
-            "canGoBack",
-            "canGoForward",
-            "goBack",
-            "goForward",
-            "reload",
-            "title",
-            "isLoading",
-            "stopLoading",
-            "url"
+            "canGoBack", // 1
+            "canGoForward", //2
+            "goBack", //3
+            "goForward",//4
+            "reload",//5
+            "title",//6
+            "isLoading",//7
+            "stopLoading",//8
+            "url",//9
+            "pullRefreshEnable"//10
     };
 
     @Override
@@ -60,6 +69,8 @@ public class UIWebViewMethodMapper<U extends UDWebView> extends UIViewMethodMapp
                 return stopLoading(target, varargs);
             case 9:
                 return url(target, varargs);
+            case 10:
+                return pullRefreshEnable(target, varargs);
         }
         return super.invoke(code, target, varargs);
     }
@@ -115,5 +126,15 @@ public class UIWebViewMethodMapper<U extends UDWebView> extends UIViewMethodMapp
     @LuaViewApi(since = VmVersion.V_530)
     public LuaValue url(U view, Varargs varargs) {
         return valueOf(view.url());
+    }
+
+    @LuaViewApi(since = VmVersion.V_530)
+    public LuaValue pullRefreshEnable(U view, Varargs varargs) {
+        if (varargs.narg() > 1) {
+            final boolean enable = LuaUtil.getBoolean(varargs, 2);
+            return view.pullRefreshEnable(enable);
+        } else {
+            return valueOf(view.isPullRefreshEnable());
+        }
     }
 }

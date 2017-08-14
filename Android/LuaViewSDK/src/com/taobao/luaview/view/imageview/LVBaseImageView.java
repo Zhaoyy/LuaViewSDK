@@ -1,8 +1,15 @@
+/*
+ * Created by LuaView.
+ * Copyright (c) 2017, Alibaba Group. All rights reserved.
+ *
+ * This source code is licensed under the MIT.
+ * For the full copyright and license information,please view the LICENSE file in the root directory of this source tree.
+ */
+
 package com.taobao.luaview.view.imageview;
 
 import android.app.Activity;
 import android.content.Context;
-import android.widget.ImageView;
 
 import com.taobao.luaview.global.LuaView;
 import com.taobao.luaview.provider.ImageProvider;
@@ -30,11 +37,11 @@ public class LVBaseImageView extends BaseImageView {
     }
 
     @Override
-    public void loadUrl(final String url, final LoadCallback callback) {
+    public void loadUrl(final String url, final DrawableLoadCallback callback) {
         this.mUrl = url;
         final ImageProvider provider = LuaView.getImageProvider();
         if (provider != null) {
-            provider.load(getContext(), new WeakReference<BaseImageView>(this), url, new WeakReference<LoadCallback>(callback));
+            provider.load(getContext(), new WeakReference<BaseImageView>(this), url, new WeakReference<DrawableLoadCallback>(callback));
         }
     }
 
@@ -49,14 +56,14 @@ public class LVBaseImageView extends BaseImageView {
 
     @Override
     protected void onAttachedToWindow() {
-        super.onAttachedToWindow();
         restoreImage();
+        super.onAttachedToWindow();
     }
 
     @Override
     protected void onDetachedFromWindow() {
-        super.onDetachedFromWindow();
         releaseBitmap();
+        super.onDetachedFromWindow();
     }
 
     public void restoreImage() {// 恢复被清空的image

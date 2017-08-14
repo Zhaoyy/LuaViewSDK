@@ -1,3 +1,9 @@
+-- Created by LuaView.
+-- Copyright (c) 2017, Alibaba Group. All rights reserved.
+--
+-- This source code is licensed under the MIT.
+-- For the full copyright and license information,please view the LICENSE file in the root directory of this source tree.
+
 view = View()
 view.frame(0, 0, 100, 100)
 view.backgroundColor(0xaaaaaa)
@@ -36,3 +42,14 @@ button.callback(function()
     print("Change ViewEffect", view.effects())
 end)
 button.effects(ViewEffect.CLICK)
+
+
+imageView2 = Image();
+imageView2.frame( 50, 300, 300, 200);
+imageView2.image("http://g.alicdn.com/ju/lua/2.0.24/doc/icon.png");
+
+imageView2.effects(ViewEffect.PARALLAX, 150, 140)
+imageView2.effects(ViewEffect.CLICK, 0xff0000, 0.6)
+imageView2.callback(function()
+    print("yyy")
+end)

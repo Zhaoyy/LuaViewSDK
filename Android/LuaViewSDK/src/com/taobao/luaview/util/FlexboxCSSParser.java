@@ -1,3 +1,11 @@
+/*
+ * Created by LuaView.
+ * Copyright (c) 2017, Alibaba Group. All rights reserved.
+ *
+ * This source code is licensed under the MIT.
+ * For the full copyright and license information,please view the LICENSE file in the root directory of this source tree.
+ */
+
 package com.taobao.luaview.util;
 
 import android.util.Log;
@@ -183,7 +191,7 @@ public class FlexboxCSSParser {
     private static void setFlex() {
         String flex = mInlineMap.get(FLEX);
         if (flex != null) {
-            mNode.setFlex(pixelFloat(flex));
+            mNode.setFlex(Float.parseFloat(flex));
         }
     }
 

@@ -1,5 +1,14 @@
+/*
+ * Created by LuaView.
+ * Copyright (c) 2017, Alibaba Group. All rights reserved.
+ *
+ * This source code is licensed under the MIT.
+ * For the full copyright and license information,please view the LICENSE file in the root directory of this source tree.
+ */
+
 package com.taobao.luaview.view;
 
+import android.text.InputType;
 import android.widget.EditText;
 
 import com.taobao.luaview.userdata.constants.UDFontSize;
@@ -24,6 +33,7 @@ public class LVEditText extends EditText implements ILVView {
         super(globals.getContext());
         this.mLuaUserdata = new UDEditText(this, globals, metaTable, varargs);
         this.setTextSize(UDFontSize.FONTSIZE_SMALL);
+        this.setInputType(InputType.TYPE_CLASS_TEXT);
     }
 
     @Override

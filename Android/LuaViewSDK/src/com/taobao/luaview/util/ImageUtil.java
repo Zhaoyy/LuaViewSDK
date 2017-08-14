@@ -1,3 +1,11 @@
+/*
+ * Created by LuaView.
+ * Copyright (c) 2017, Alibaba Group. All rights reserved.
+ *
+ * This source code is licensed under the MIT.
+ * For the full copyright and license information,please view the LICENSE file in the root directory of this source tree.
+ */
+
 package com.taobao.luaview.util;
 
 import android.content.Context;
@@ -10,6 +18,7 @@ import com.taobao.luaview.global.LuaResourceFinder;
 import com.taobao.luaview.global.LuaView;
 import com.taobao.luaview.provider.ImageProvider;
 import com.taobao.luaview.view.imageview.BaseImageView;
+import com.taobao.luaview.view.imageview.DrawableLoadCallback;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -51,7 +60,7 @@ public class ImageUtil {
      * @param url
      * @param callback
      */
-    public static void fetch(Context context, final LuaResourceFinder finder, final String url, final BaseImageView.LoadCallback callback) {
+    public static void fetch(Context context, final LuaResourceFinder finder, final String url, final DrawableLoadCallback callback) {
         if (context != null && !TextUtils.isEmpty(url)) {
             if (URLUtil.isNetworkUrl(url)) {//network
                 final ImageProvider provider = LuaView.getImageProvider();
@@ -81,7 +90,7 @@ public class ImageUtil {
                 if (URLUtil.isNetworkUrl(url)) {//network
                     final ImageProvider imageProvider = LuaView.getImageProvider();
                     if (imageProvider != null) {
-                        imageProvider.preload(context, url, new BaseImageView.LoadCallback() {
+                        imageProvider.preload(context, url, new DrawableLoadCallback() {
                             @Override
                             public void onLoadResult(Drawable drawable) {
                                 result.put(url, drawable);

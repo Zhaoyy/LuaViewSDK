@@ -1,3 +1,9 @@
+-- Created by LuaView.
+-- Copyright (c) 2017, Alibaba Group. All rights reserved.
+--
+-- This source code is licensed under the MIT.
+-- For the full copyright and license information,please view the LICENSE file in the root directory of this source tree.
+
 w, h = System.screenSize();
 
 cellHeight = 100
@@ -113,6 +119,7 @@ collectionView = RefreshCollectionView {
 loading = false;
 
 collectionView.frame(0, 0, w, h - 64);
+collectionView.showScrollIndicator(false)
 
 
 

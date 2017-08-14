@@ -18,8 +18,7 @@ dependencies {
     compile 'com.android.support:support-v4:23.0.1'
     //recycler view
     compile 'com.android.support:recyclerview-v7:23.0.1'
-    //bcel for LuaJ
-    compile 'org.apache.bcel:bcel:5.2'
+//    compile 'com.android.support:appcompat-v7:23.4.0'
 }
 
 /*
@@ -27,7 +26,7 @@ dependencies {
 */
 android {
     compileSdkVersion 23
-    buildToolsVersion '23.0.1'
+    buildToolsVersion '25.0.0'
     sourceSets {
         main {
             jniLibs.srcDirs = ['libs']
@@ -59,6 +58,9 @@ android {
         debug {
             debuggable true
         }
+    }
+    lintOptions {
+        abortOnError false
     }
 }
 

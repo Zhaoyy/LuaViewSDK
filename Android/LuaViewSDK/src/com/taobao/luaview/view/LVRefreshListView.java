@@ -1,3 +1,11 @@
+/*
+ * Created by LuaView.
+ * Copyright (c) 2017, Alibaba Group. All rights reserved.
+ *
+ * This source code is licensed under the MIT.
+ * For the full copyright and license information,please view the LICENSE file in the root directory of this source tree.
+ */
+
 package com.taobao.luaview.view;
 
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -36,7 +44,7 @@ public class LVRefreshListView extends SwipeRefreshLayout implements ILVListView
         this.addView(mListView, LuaViewUtil.createRelativeLayoutParamsMM());
         globals.restoreContainer();
 
-        if (globals.getLuaView() == null || globals.getLuaView().isRefreshContainerEnable() == false) {
+        if (!globals.isRefreshContainerEnable) {
             this.setEnabled(false);
         } else {
             ((UDRefreshListView) getUserdata()).initPullRefresh();
@@ -62,9 +70,17 @@ public class LVRefreshListView extends SwipeRefreshLayout implements ILVListView
         return mListView != null ? mListView.getUserdata() : null;
     }
 
+
     @Override
-    public void addLVView(View view, Varargs varargs) {
-        //TODO 这里不做操作，因为ListView不应该加子view
+    public void setVerticalScrollBarEnabled(boolean horizontalScrollBarEnabled) {
+        if(mListView != null){
+            mListView.setVerticalScrollBarEnabled(horizontalScrollBarEnabled);
+        }
+    }
+
+    @Override
+    public boolean isVerticalScrollBarEnabled() {
+        return mListView != null ? mListView.isVerticalScrollBarEnabled() : true;
     }
 
     public LVListView getListView() {

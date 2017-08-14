@@ -1,3 +1,9 @@
+-- Created by LuaView.
+-- Copyright (c) 2017, Alibaba Group. All rights reserved.
+--
+-- This source code is licensed under the MIT.
+-- For the full copyright and license information,please view the LICENSE file in the root directory of this source tree.
+
 require "kit/lv_kit"
 
 print(type(System))
@@ -17,7 +23,7 @@ end).start(1, true)
 
 System.gc()
 
-
+print(window.size())
 
 btn1 = Button();
 btn1.text("Screen-On")

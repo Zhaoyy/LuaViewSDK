@@ -1,3 +1,11 @@
+/*
+ * Created by LuaView.
+ * Copyright (c) 2017, Alibaba Group. All rights reserved.
+ *
+ * This source code is licensed under the MIT.
+ * For the full copyright and license information,please view the LICENSE file in the root directory of this source tree.
+ */
+
 package com.taobao.luaview.receiver;
 
 import android.content.BroadcastReceiver;
@@ -7,7 +15,7 @@ import android.content.Intent;
 import com.taobao.luaview.util.NetworkUtil;
 
 import java.lang.ref.WeakReference;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListMap;
 
 /**
  * 监听网络状态变化
@@ -15,8 +23,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author song
  */
 public class ConnectionStateChangeBroadcastReceiver extends BroadcastReceiver {
-    private static final String TAG = ConnectionStateChangeBroadcastReceiver.class.getSimpleName();
-    private ConcurrentHashMap<Integer, WeakReference<OnConnectionChangeListener>> mOnConnectionChangeListeners;
+    private ConcurrentSkipListMap<Integer, WeakReference<OnConnectionChangeListener>> mOnConnectionChangeListeners;
 
     public interface OnConnectionChangeListener {
         void onConnectionClosed();//所有的连接都断开
@@ -27,7 +34,7 @@ public class ConnectionStateChangeBroadcastReceiver extends BroadcastReceiver {
     }
 
     public ConnectionStateChangeBroadcastReceiver() {
-        this.mOnConnectionChangeListeners = new ConcurrentHashMap<Integer, WeakReference<OnConnectionChangeListener>>();
+        this.mOnConnectionChangeListeners = new ConcurrentSkipListMap<Integer, WeakReference<OnConnectionChangeListener>>();
     }
 
     public void addOnConnectionChangeListener(OnConnectionChangeListener listener) {

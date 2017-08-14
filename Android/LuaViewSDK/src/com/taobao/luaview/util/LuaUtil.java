@@ -1,3 +1,11 @@
+/*
+ * Created by LuaView.
+ * Copyright (c) 2017, Alibaba Group. All rights reserved.
+ *
+ * This source code is licensed under the MIT.
+ * For the full copyright and license information,please view the LICENSE file in the root directory of this source tree.
+ */
+
 package com.taobao.luaview.util;
 
 import com.taobao.luaview.userdata.kit.UDUnicode;
@@ -46,6 +54,21 @@ public class LuaUtil {
         } else {
             return null;
         }
+    }
+
+    /**
+     * convert a LuaValue to Alpha int
+     * @param value
+     * @return
+     */
+    public static Integer toAlphaInt(final LuaValue value) {
+        if (isNumber(value)) {
+            final double dValue = value.optdouble(-1);
+            if (dValue >= 0) {
+                return (int) (dValue * 0xFF);
+            }
+        }
+        return null;
     }
 
     /**
@@ -168,7 +191,7 @@ public class LuaUtil {
      */
     public static Float getFloat(final Varargs varargs, Float defaultValue, int... poslist) {
         final LuaNumber number = (LuaNumber) getValue(LuaValue.TNUMBER, varargs, defaultValue, poslist);
-        return number != null ? (float) number.checkdouble() : null;
+        return number != null ? (float) number.checkdouble() : defaultValue;
     }
 
 
@@ -408,16 +431,6 @@ public class LuaUtil {
     }
 
     /**
-     * is int
-     *
-     * @param target
-     * @return
-     */
-    public static boolean isInt(final LuaValue target) {
-        return target != null && target.type() == LuaValue.TINT;
-    }
-
-    /**
      * is number
      *
      * @param target
@@ -652,6 +665,10 @@ public class LuaUtil {
      */
     public static LuaValue toLuaInt(Integer pos) {
         return pos != null ? LuaValue.valueOf(pos + 1) : LuaValue.NIL;
+    }
+
+    public static LuaValue toLuaBoolean(boolean value) {
+        return LuaValue.valueOf(value);
     }
 
     /**

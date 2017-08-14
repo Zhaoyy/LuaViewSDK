@@ -1,8 +1,15 @@
+/*
+ * Created by LuaView.
+ * Copyright (c) 2017, Alibaba Group. All rights reserved.
+ *
+ * This source code is licensed under the MIT.
+ * For the full copyright and license information,please view the LICENSE file in the root directory of this source tree.
+ */
+
 package com.taobao.luaview.view;
 
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
-import android.view.View;
 
 import com.taobao.luaview.userdata.list.UDRefreshRecyclerView;
 import com.taobao.luaview.userdata.ui.UDView;
@@ -36,11 +43,23 @@ public class LVRefreshRecyclerView extends SwipeRefreshLayout implements ILVRecy
         this.addView(mRecyclerView, LuaViewUtil.createRelativeLayoutParamsMM());
         globals.restoreContainer();
 
-        if (globals.getLuaView() == null || globals.getLuaView().isRefreshContainerEnable() == false) {
+        if (!globals.isRefreshContainerEnable) {
             this.setEnabled(false);
         } else {
             ((UDRefreshRecyclerView) getUserdata()).initPullRefresh();
         }
+    }
+
+    @Override
+    public void setVerticalScrollBarEnabled(boolean horizontalScrollBarEnabled) {
+        if (mRecyclerView != null) {
+            mRecyclerView.setVerticalScrollBarEnabled(horizontalScrollBarEnabled);
+        }
+    }
+
+    @Override
+    public boolean isVerticalScrollBarEnabled() {
+        return mRecyclerView != null ? mRecyclerView.isVerticalScrollBarEnabled() : true;
     }
 
     /**
@@ -65,12 +84,6 @@ public class LVRefreshRecyclerView extends SwipeRefreshLayout implements ILVRecy
     public UDView getUserdata() {
         return mRecyclerView != null ? mRecyclerView.getUserdata() : null;
     }
-
-    @Override
-    public void addLVView(View view, Varargs varargs) {
-        //TODO 这里不做操作，因为ListView不应该加子view
-    }
-
 
     @Override
     public RecyclerView.Adapter getLVAdapter() {

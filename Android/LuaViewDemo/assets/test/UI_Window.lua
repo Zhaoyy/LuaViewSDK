@@ -1,3 +1,9 @@
+-- Created by LuaView.
+-- Copyright (c) 2017, Alibaba Group. All rights reserved.
+--
+-- This source code is licensed under the MIT.
+-- For the full copyright and license information,please view the LICENSE file in the root directory of this source tree.
+
 scrW, scrH = System.screenSize()
 error = Button()
 error.text("xxxx")
@@ -29,7 +35,10 @@ window.callback({
     end,
     onBack = function()
         print("onBack")
-        return false
+
+
+    Toast("onBack")
+        return true
     end,
     onWifiConnected = function()
         print("onWifiConnected")
@@ -47,3 +56,4 @@ window.callback({
         print("onLayout")
     end
 })
+

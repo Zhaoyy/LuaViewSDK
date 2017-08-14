@@ -1,3 +1,11 @@
+/*
+ * Created by LuaView.
+ * Copyright (c) 2017, Alibaba Group. All rights reserved.
+ *
+ * This source code is licensed under the MIT.
+ * For the full copyright and license information,please view the LICENSE file in the root directory of this source tree.
+ */
+
 package com.taobao.luaview.userdata.ui;
 
 import android.view.View;
@@ -113,23 +121,17 @@ public class UDViewGroup<T extends ViewGroup> extends UDView<T> {
         return LuaUtil.callFunction(mOnLayout);
     }
 
-
     /**
      * add a subview
      *
      * @param subView
      * @return
      */
-    public UDViewGroup addView(UDView subView) {
+    public UDViewGroup addView(UDView subView, Integer pos) {
         final ViewGroup viewGroup = getContainer();
         if (viewGroup != null && subView != null && subView.getView() != null) {
             final View view = subView.getView();
-            if (viewGroup instanceof ILVViewGroup) {
-                ((ILVViewGroup) viewGroup).addLVView(view, null);
-            } else {
-                final ViewGroup.LayoutParams layoutParams = LuaViewUtil.getOrCreateLayoutParams(view);
-                viewGroup.addView(view, layoutParams);
-            }
+            LuaViewUtil.addView(viewGroup, view, pos != null ? pos : -1, null);
         }
         return this;
     }
@@ -167,12 +169,12 @@ public class UDViewGroup<T extends ViewGroup> extends UDView<T> {
      * @return
      */
     public UDViewGroup children(LuaFunction callback) {
-        if (getView() instanceof ILVViewGroup) {
+        if (getView() instanceof ViewGroup) {
             Globals globals = getGlobals();
             if (globals != null) {
-                globals.saveContainer((ILVViewGroup) getView());
+                globals.pushContainer(getView());
                 LuaUtil.callFunction(callback, this);
-                globals.restoreContainer();
+                globals.popContainer();
             }
         }
         return this;

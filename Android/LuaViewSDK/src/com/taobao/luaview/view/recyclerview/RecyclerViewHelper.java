@@ -1,3 +1,11 @@
+/*
+ * Created by LuaView.
+ * Copyright (c) 2017, Alibaba Group. All rights reserved.
+ *
+ * This source code is licensed under the MIT.
+ * For the full copyright and license information,please view the LICENSE file in the root directory of this source tree.
+ */
+
 package com.taobao.luaview.view.recyclerview;
 
 import android.support.v7.widget.LinearLayoutManager;
@@ -52,6 +60,6 @@ public class RecyclerViewHelper {
     public static int getVisibleItemCount(RecyclerView rv) {
         final int firstVisiblePos = getFirstVisiblePosition(rv);
         final int lastVisiblePos = getLastVisiblePosition(rv);
-        return Math.max(0, lastVisiblePos - firstVisiblePos);
+        return Math.max(0, lastVisiblePos - firstVisiblePos + 1);
     }
 }

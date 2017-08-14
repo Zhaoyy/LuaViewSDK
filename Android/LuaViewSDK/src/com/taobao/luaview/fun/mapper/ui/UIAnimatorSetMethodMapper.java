@@ -1,3 +1,11 @@
+/*
+ * Created by LuaView.
+ * Copyright (c) 2017, Alibaba Group. All rights reserved.
+ *
+ * This source code is licensed under the MIT.
+ * For the full copyright and license information,please view the LICENSE file in the root directory of this source tree.
+ */
+
 package com.taobao.luaview.fun.mapper.ui;
 
 import android.animation.ValueAnimator;
@@ -25,10 +33,11 @@ import java.util.List;
  * @author song
  * @date 15/8/21
  */
+@Deprecated
 @LuaViewLib
 public class UIAnimatorSetMethodMapper<U extends UDAnimatorSet> extends BaseMethodMapper<U> {
 
-    private static final String TAG = UIAnimatorSetMethodMapper.class.getSimpleName();
+    private static final String TAG = "UIAnimatorSetMethodMapper";
     private static final String[] sMethods = new String[]{
             "with",//0
             "start",//1
@@ -56,7 +65,10 @@ public class UIAnimatorSetMethodMapper<U extends UDAnimatorSet> extends BaseMeth
             "onCancel",//23
             "onPause",//24
             "onUpdate",//25
-            "onResume"//26
+            "onResume",//26
+            "isRunning", //27
+            "isPaused",//28
+            "isStarted"//29
     };
 
     @Override
@@ -122,6 +134,12 @@ public class UIAnimatorSetMethodMapper<U extends UDAnimatorSet> extends BaseMeth
                 return onUpdate(target, varargs);
             case 26:
                 return onResume(target, varargs);
+            case 27:
+                return isRunning(target, varargs);
+            case 28:
+                return isPaused(target, varargs);
+            case 29:
+                return isStarted(target, varargs);
         }
         return super.invoke(code, target, varargs);
     }
@@ -236,6 +254,41 @@ public class UIAnimatorSetMethodMapper<U extends UDAnimatorSet> extends BaseMeth
         return udAnimator.setFloatValues(ParamUtil.getFloatValues(varargs, 2));
     }
 
+    /**
+     * is Running
+     *
+     * @param udAnimation
+     * @param varargs
+     * @return
+     */
+    @LuaViewApi(since = VmVersion.V_540)
+    public LuaValue isRunning(U udAnimation, Varargs varargs) {
+        return valueOf(udAnimation.isRunning());
+    }
+
+    /**
+     * is paused
+     *
+     * @param udAnimation
+     * @param varargs
+     * @return
+     */
+    @LuaViewApi(since = VmVersion.V_540)
+    public LuaValue isPaused(U udAnimation, Varargs varargs) {
+        return valueOf(udAnimation.isPaused());
+    }
+
+    /**
+     * is started
+     *
+     * @param udAnimation
+     * @param varargs
+     * @return
+     */
+    @LuaViewApi(since = VmVersion.V_540)
+    public LuaValue isStarted(U udAnimation, Varargs varargs) {
+        return valueOf(udAnimation.isStarted());
+    }
     //--------------------------------------------回调----------------------------------------------
 
     public LuaValue callback(U udAnimator, Varargs varargs) {

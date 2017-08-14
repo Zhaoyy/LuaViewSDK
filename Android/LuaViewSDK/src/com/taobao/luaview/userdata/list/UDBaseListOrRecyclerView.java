@@ -1,3 +1,11 @@
+/*
+ * Created by LuaView.
+ * Copyright (c) 2017, Alibaba Group. All rights reserved.
+ *
+ * This source code is licensed under the MIT.
+ * For the full copyright and license information,please view the LICENSE file in the root directory of this source tree.
+ */
+
 package com.taobao.luaview.userdata.list;
 
 import android.graphics.Point;
@@ -28,16 +36,16 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public abstract class UDBaseListOrRecyclerView<T extends ViewGroup> extends UDViewGroup<T> {
     //初始化数据
     private LuaValue mSectionDelegate;
-    private LuaValue mCellDelegate;
+    protected LuaValue mCellDelegate;
 
     //view type map
     private AtomicBoolean isSectionLengthInit = new AtomicBoolean(false);
     private Point[] mSectionLength;//长度数组，每个point的x为开始位置(包含)，y为结束位置(不包含)，(y-x)为该组长度
-    private HashMap<String, Integer> mViewTypeMap = new HashMap<String, Integer>();//view类型集合，从0开始，不能放到init中初始化
-    private HashMap<Integer, String> mViewTypeNameMap = new HashMap<Integer, String>();//View类型名称集合，不能放到init中初始化
+    protected HashMap<String, Integer> mViewTypeMap = new HashMap<String, Integer>();//view类型集合，从0开始，不能放到init中初始化
+    protected HashMap<Integer, String> mViewTypeNameMap = new HashMap<Integer, String>();//View类型名称集合，不能放到init中初始化
 
     //id
-    private SparseCache<String> mIdCache;
+    protected SparseCache<String> mIdCache;
 
     //延迟加载
     protected boolean mLazyLoad = true;
@@ -154,6 +162,10 @@ public abstract class UDBaseListOrRecyclerView<T extends ViewGroup> extends UDVi
      * @return
      */
     protected int getRawSectionCount() {
+        if (this.mSectionDelegate == null) {
+            return 0;
+        }
+
         return LuaUtil.getOrCallFunction(this.mSectionDelegate.get("SectionCount")).optint(1);
     }
 
@@ -262,7 +274,7 @@ public abstract class UDBaseListOrRecyclerView<T extends ViewGroup> extends UDVi
      * @param row
      * @return
      */
-    private String getId(int position, int section, int row) {
+    protected String getId(int position, int section, int row) {
         final String cacheId = mIdCache != null ? mIdCache.get(position) : null;
         if (cacheId != null) {
             return cacheId;

@@ -1,3 +1,9 @@
+-- Created by LuaView.
+-- Copyright (c) 2017, Alibaba Group. All rights reserved.
+--
+-- This source code is licensed under the MIT.
+-- For the full copyright and license information,please view the LICENSE file in the root directory of this source tree.
+
 -- 简单动画
 startBtn = Button();
 startBtn.frame(10, 10, 80, 50)
@@ -25,7 +31,7 @@ local function updateControlBtns()
     resumeBtn.text(paused and "Resume" or "Pause")
 end
 
-translation = Animation().translation(100, -100).duration(3).interpolator(Interpolator.ACCELERATE_DECELERATE).callback({
+translation = Animation().translation(100, -100).duration(3).repeatCount(-1).interpolator(Interpolator.ACCELERATE_DECELERATE).callback({
     onStart = function()
         stateLabel.text("Running")
     end,
